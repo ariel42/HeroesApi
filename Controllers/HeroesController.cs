@@ -1,5 +1,6 @@
 ﻿using HeroesApi.Data;
 using HeroesApi.Data.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace HeroesApi
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class HeroesController : ControllerBase
