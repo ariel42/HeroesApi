@@ -58,8 +58,8 @@ namespace HeroesApi.Data.Migrations
                     b.Property<string>("SuitPart3Color")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TrainerId")
-                        .HasColumnType("int");
+                    b.Property<string>("TrainerName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

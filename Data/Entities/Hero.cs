@@ -8,7 +8,7 @@ namespace HeroesApi.Data.Entities
     public class Hero
     {
         public Guid Id { get; set; }
-        public int TrainerId { get; set; }
+        public string TrainerName { get; set; }
         public string Name { get; set; }
         public bool IsAttacker { get; set; }
         public bool IsDefender { get; set; }

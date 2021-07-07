@@ -19,9 +19,9 @@ namespace HeroesApi
     public class HeroesController : ControllerBase
     {
         private readonly ApplicationDbContext dbContext;
-        private readonly AppConfiguration configuration;
+        private readonly ApiConfiguration configuration;
 
-        public HeroesController(ApplicationDbContext dbContext, IOptions<AppConfiguration> configuration)
+        public HeroesController(ApplicationDbContext dbContext, IOptions<ApiConfiguration> configuration)
         {
             this.dbContext = dbContext;
             this.configuration = configuration.Value;
@@ -71,8 +71,10 @@ namespace HeroesApi
             try
             {
                 dbContext.Heroes.Add(hero);
+                hero.TrainerName = this.HttpContext.User.Identity.Name;
                 await dbContext.SaveChangesAsync();
-                var dbHero = await dbContext.Heroes.FindAsync(hero.Id);
+
+                var dbHero = await GetHero(hero.Id);
                 return dbHero;
             }
             catch (Exception ex)
@@ -91,10 +93,10 @@ namespace HeroesApi
                 {
                     return NotFound();
                 }
-                dbContext.Heroes.Update(hero);
+                dbContext.Entry(dbHero).CurrentValues.SetValues(hero);
                 await dbContext.SaveChangesAsync();
-                var newDbHero = await dbContext.Heroes.FindAsync(hero.Id);
-                SetHeroTrainingToday(newDbHero);
+
+                var newDbHero = await GetHero(heroId);
                 return newDbHero;
             }
             catch (Exception ex)
@@ -123,7 +125,9 @@ namespace HeroesApi
                 hero.NumTrainingAtLastDate = hero.NumTrainingToday + 1;
                 hero.LastTrainingDate = DateTime.Now;
                 hero.FirstTrainingDate = hero.FirstTrainingDate ?? hero.LastTrainingDate;
-                var updatedHero = await UpdateHero(heroId, hero);
+                await dbContext.SaveChangesAsync();
+
+                var updatedHero = await GetHero(heroId);
                 return updatedHero;
             }
             catch (Exception ex)

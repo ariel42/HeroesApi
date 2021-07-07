@@ -66,7 +66,7 @@ namespace HeroesApi
                 options.AccessDeniedPath = "/login";
             });
 
-            services.Configure<AppConfiguration>(Configuration.GetSection("AppConfiguration"));
+            services.Configure<ApiConfiguration>(Configuration.GetSection("AppConfiguration"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

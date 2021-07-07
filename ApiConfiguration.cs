@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace HeroesApi
 {
-    public class AppConfiguration
+    public class ApiConfiguration
     {
         public int MaxTrainingPerDay { get; set; }
+        public string LoggedInUser { get; set; }
     }
 }

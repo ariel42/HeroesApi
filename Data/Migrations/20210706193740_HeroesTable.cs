@@ -12,7 +12,7 @@ namespace HeroesApi.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    TrainerId = table.Column<int>(nullable: false),
+                    TrainerName = table.Column<string>(nullable: true),
                     Name = table.Column<string>(nullable: true),
                     IsAttacker = table.Column<bool>(nullable: false),
                     IsDefender = table.Column<bool>(nullable: false),

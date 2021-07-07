@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HeroesApi.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210704191446_HeroesTable")]
+    [Migration("20210706193740_HeroesTable")]
     partial class HeroesTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -60,8 +60,8 @@ namespace HeroesApi.Data.Migrations
                     b.Property<string>("SuitPart3Color")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TrainerId")
-                        .HasColumnType("int");
+                    b.Property<string>("TrainerName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
