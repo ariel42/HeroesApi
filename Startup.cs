@@ -61,9 +61,6 @@ namespace HeroesApi
                 options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.None;
                 options.ExpireTimeSpan = TimeSpan.FromHours(12);
                 options.SlidingExpiration = false;
-
-                options.LoginPath = "/login";
-                options.AccessDeniedPath = "/login";
             });
 
             services.Configure<ApiConfiguration>(Configuration.GetSection("AppConfiguration"));

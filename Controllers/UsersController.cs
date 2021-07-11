@@ -29,7 +29,7 @@ namespace HeroesApi.Controllers
             var result = await userManager.CreateAsync(new IdentityUser(credentials.Username), credentials.Password);
             if (result.Succeeded)
             {
-                return NoContent();
+                return await Login(credentials);
             }
             else
             {
@@ -51,11 +51,11 @@ namespace HeroesApi.Controllers
             }
         }
 
-        [HttpGet("test")]
-        public async Task<ActionResult<string>> GenerateUser()
+        [HttpPost("logout")]
+        public async Task<ActionResult<string>> Logout()
         {
-            var result = await Login(new Credentials { Username = "ariel2", Password = "A!123456" });
-            return result;
+            await signInManager.SignOutAsync();
+            return NoContent();
         }
     }
 }

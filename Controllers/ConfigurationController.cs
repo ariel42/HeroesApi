@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace HeroesApi.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ConfigurationController : ControllerBase
