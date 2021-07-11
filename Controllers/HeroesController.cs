@@ -88,11 +88,19 @@ namespace HeroesApi
             SetHeroTrainingToday(hero);
             if (hero.NumTrainingToday >= configuration.MaxTrainingPerDay)
             {
-                return Conflict("The hero has been trained enough today");
+                return Conflict(new ApiError
+                {
+                    Code = ApiErrors.HERO_ALREADY_TRAINED,
+                    Message = "The hero has been trained enough today"
+                });
             }
             if (hero.TrainerName != HttpContext.User.Identity.Name)
             {
-                return Conflict("You can't train other trainer's hero");
+                return Conflict(new ApiError
+                {
+                    Code = ApiErrors.HERO_BELONGS_TO_OTHER_TRAINER,
+                    Message = "You can't train other trainer's hero"
+                });
             }
 
             hero.CurrentPower *= 1 + (new Random().NextDouble() / 10);

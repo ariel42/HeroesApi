@@ -33,7 +33,11 @@ namespace HeroesApi.Controllers
             }
             else
             {
-                return Conflict(result.Errors.Select(e => e.Description));
+                return Conflict(new ApiError
+                {
+                    Code = ApiErrors.SIGNUP_ERROR,
+                    Message = result.Errors.First().Description
+                });
             }
         }
 
@@ -47,7 +51,11 @@ namespace HeroesApi.Controllers
             }
             else
             {
-                return Conflict("Invalid username or password");
+                return Conflict(new ApiError
+                {
+                    Code = ApiErrors.LOGIN_ERROR,
+                    Message = "Invalid username or password"
+                });
             }
         }
 
