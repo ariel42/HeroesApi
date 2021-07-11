@@ -30,114 +30,79 @@ namespace HeroesApi
         [HttpGet]
         public async Task<ActionResult<ICollection<Hero>>> Get()
         {
-            try
+            var heroes = await dbContext.Heroes.ToListAsync();
+            foreach (var hero in heroes)
             {
-                var heroes = await dbContext.Heroes.ToListAsync();
-                foreach (var hero in heroes)
-                {
-                    SetHeroTrainingToday(hero);
-                }
-                
-                return heroes;
+                SetHeroTrainingToday(hero);
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500);
-            }
+
+            return heroes;
         }
 
         [HttpGet("{heroId}")]
         public async Task<ActionResult<Hero>> GetHero(Guid heroId)
         {
-            try
+            var hero = await dbContext.Heroes.FindAsync(heroId);
+            if (hero == null)
             {
-                var hero = await dbContext.Heroes.FindAsync(heroId);
-                if (hero == null)
-                {
-                    return NotFound();
-                }
-                SetHeroTrainingToday(hero);
-                return hero;
+                return NotFound();
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500);
-            }
+            SetHeroTrainingToday(hero);
+            return hero;
         }
 
         [HttpPost]
         public async Task<ActionResult<Hero>> CreateHero([FromBody] Hero hero)
         {
-            try
-            {
-                dbContext.Heroes.Add(hero);
-                hero.TrainerName = this.HttpContext.User.Identity.Name;
-                await dbContext.SaveChangesAsync();
+            dbContext.Heroes.Add(hero);
+            hero.TrainerName = this.HttpContext.User.Identity.Name;
+            await dbContext.SaveChangesAsync();
 
-                var dbHero = await GetHero(hero.Id);
-                return dbHero;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500);
-            }
+            var dbHero = await GetHero(hero.Id);
+            return dbHero;
         }
 
         [HttpPut("{heroId}")]
         public async Task<ActionResult<Hero>> UpdateHero(Guid heroId, [FromBody] Hero hero)
         {
-            try
+            var dbHero = await dbContext.Heroes.FindAsync(heroId);
+            if (dbHero == null)
             {
-                var dbHero = await dbContext.Heroes.FindAsync(heroId);
-                if (dbHero == null)
-                {
-                    return NotFound();
-                }
-                dbContext.Entry(dbHero).CurrentValues.SetValues(hero);
-                await dbContext.SaveChangesAsync();
+                return NotFound();
+            }
+            dbContext.Entry(dbHero).CurrentValues.SetValues(hero);
+            await dbContext.SaveChangesAsync();
 
-                var newDbHero = await GetHero(heroId);
-                return newDbHero;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500);
-            }
+            var newDbHero = await GetHero(heroId);
+            return newDbHero;
         }
 
         [HttpPut("{heroId}/training")]
         public async Task<ActionResult<Hero>> TrainHero(Guid heroId)
         {
-            try
+            var hero = await dbContext.Heroes.FindAsync(heroId);
+            if (hero == null)
             {
-                var hero = await dbContext.Heroes.FindAsync(heroId);
-                if (hero == null)
-                {
-                    return NotFound();
-                }
-                SetHeroTrainingToday(hero);
-                if (hero.NumTrainingToday >= configuration.MaxTrainingPerDay)
-                {
-                    return Conflict("The hero has been trained enough today");
-                }
-                if (hero.TrainerName != HttpContext.User.Identity.Name)
-                {
-                    return Conflict("You can't train other trainer's hero");
-                }
-
-                hero.CurrentPower *= 1 + (new Random().NextDouble() / 10);
-                hero.NumTrainingAtLastDate = hero.NumTrainingToday + 1;
-                hero.LastTrainingDate = DateTime.Now;
-                hero.FirstTrainingDate = hero.FirstTrainingDate ?? hero.LastTrainingDate;
-                await dbContext.SaveChangesAsync();
-
-                var updatedHero = await GetHero(heroId);
-                return updatedHero;
+                return NotFound();
             }
-            catch (Exception ex)
+            SetHeroTrainingToday(hero);
+            if (hero.NumTrainingToday >= configuration.MaxTrainingPerDay)
             {
-                return StatusCode(500);
+                return Conflict("The hero has been trained enough today");
             }
+            if (hero.TrainerName != HttpContext.User.Identity.Name)
+            {
+                return Conflict("You can't train other trainer's hero");
+            }
+
+            hero.CurrentPower *= 1 + (new Random().NextDouble() / 10);
+            hero.NumTrainingAtLastDate = hero.NumTrainingToday + 1;
+            hero.LastTrainingDate = DateTime.Now;
+            hero.FirstTrainingDate = hero.FirstTrainingDate ?? hero.LastTrainingDate;
+            await dbContext.SaveChangesAsync();
+
+            var updatedHero = await GetHero(heroId);
+            return updatedHero;
         }
 
         private void SetHeroTrainingToday(Hero hero)

@@ -32,16 +32,22 @@ namespace HeroesApi.Filters
             var request = context.HttpContext.Request;
             string body = "";
 
-            request.Body.Seek(0, SeekOrigin.Begin);
-            using (StreamReader stream = new StreamReader(request.Body))
+            if (request.Method != "GET" && request.Path != "/api/users/login")
             {
-                body = await stream.ReadToEndAsync();
+                request.Body.Seek(0, SeekOrigin.Begin);
+                using (StreamReader stream = new StreamReader(request.Body))
+                {
+                    body = await stream.ReadToEndAsync();
+                }
             }
 
-            logger.Info(request.Method + "\t" + request.Path + "\t" + body);
+            logger.Info(context.HttpContext.TraceIdentifier + "\t" + request.Method + "\t" + request.Path + "\t" + body);
 
-            await next();
+            var result = await next();
+            if (result.Exception != null) 
+            {
+                logger.Error(context.HttpContext.TraceIdentifier, result.Exception);
+            }
         }
     }
-
 }
