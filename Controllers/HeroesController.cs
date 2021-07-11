@@ -120,6 +120,10 @@ namespace HeroesApi
                 {
                     return Conflict("The hero has been trained enough today");
                 }
+                if (hero.TrainerName != HttpContext.User.Identity.Name)
+                {
+                    return Conflict("You can't train other trainer's hero");
+                }
 
                 hero.CurrentPower *= 1 + (new Random().NextDouble() / 10);
                 hero.NumTrainingAtLastDate = hero.NumTrainingToday + 1;
