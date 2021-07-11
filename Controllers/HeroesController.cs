@@ -66,7 +66,7 @@ namespace HeroesApi
         }
 
         [HttpPost]
-        public async Task<ActionResult<Hero>> CreateHero(Hero hero)
+        public async Task<ActionResult<Hero>> CreateHero([FromBody] Hero hero)
         {
             try
             {

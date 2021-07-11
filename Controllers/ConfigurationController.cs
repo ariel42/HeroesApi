@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using log4net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -14,10 +15,11 @@ namespace HeroesApi.Controllers
     public class ConfigurationController : ControllerBase
     {
         private readonly ApiConfiguration globalConfiguration;
-
-        public ConfigurationController(IOptions<ApiConfiguration> configuration)
+        private readonly ILog logger;
+        public ConfigurationController(IOptions<ApiConfiguration> configuration, ILoggerManager loggerManager)
         {
             globalConfiguration = configuration.Value;
+            logger = loggerManager.Logger;
         }
 
         [HttpGet]
