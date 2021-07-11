@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System;
 using System.Collections.Generic;
@@ -44,9 +45,23 @@ namespace HeroesApi.Filters
             logger.Info(context.HttpContext.TraceIdentifier + "\t" + request.Method + "\t" + request.Path + "\t" + body);
 
             var result = await next();
-            if (result.Exception != null) 
+            if (result.Exception != null)
             {
                 logger.Error(context.HttpContext.TraceIdentifier, result.Exception);
+            }
+            else if (result.Result is ConflictObjectResult)
+            {
+                var apiError = ((ConflictObjectResult)result.Result).Value as ApiError;
+                if (apiError != null)
+                {
+                    var warning = new
+                    {
+                        TraceIdentifier = context.HttpContext.TraceIdentifier,
+                        Code = apiError.Code,
+                        Message = apiError.Message
+                    };
+                    logger.Warn(warning);
+                }
             }
         }
     }
